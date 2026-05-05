@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+
+<HBox alignment="CENTER_LEFT" spacing="15.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.FilaNuevoElementoController">
+    <children>
+        <TextField fx:id="txtNuevoNombreElemento" prefWidth="150.0" promptText="Nombre..." />
+      <TextField fx:id="txtNuevaCantidadElemento" promptText="Cantidad..." />
+        <TextField fx:id="txtNuevaDescripcionElemento" prefWidth="200.0" promptText="Descripción..." />
+        <Region prefWidth="100.0" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button mnemonicParsing="false" onAction="#accionAnadirElemento" text="+" />
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+</HBox>

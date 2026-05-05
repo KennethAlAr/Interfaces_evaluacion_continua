@@ -1,0 +1,158 @@
+[
+  {
+    "nombre": "Lista de la Compra",
+    "descripcion": "Artículos necesarios para la semana",
+    "elementos": [
+      {
+        "nombre": "Leche",
+        "cantidad": 6,
+        "descripcion": "Entera o semidesnatada",
+        "comprado": false
+      },
+      {
+        "nombre": "Pan de molde",
+        "cantidad": 1,
+        "descripcion": "Integral",
+        "comprado": true
+      },
+      {
+        "nombre": "Huevos",
+        "cantidad": 12,
+        "descripcion": "Tamaño L",
+        "comprado": false
+      },
+      {
+        "nombre": "Manzanas",
+        "cantidad": 5,
+        "descripcion": "Fuji",
+        "comprado": false
+      },
+      {
+        "nombre": "Pechuga de pollo",
+        "cantidad": 2,
+        "descripcion": "Bandejas de 500g",
+        "comprado": false
+      },
+      {
+        "nombre": "Pasta",
+        "cantidad": 3,
+        "descripcion": "Macarrones y espaguetis",
+        "comprado": true
+      },
+      {
+        "nombre": "Arroz",
+        "cantidad": 1,
+        "descripcion": "Bolsa de 1kg",
+        "comprado": false
+      },
+      {
+        "nombre": "Tomate frito",
+        "cantidad": 3,
+        "descripcion": "Brik pequeño",
+        "comprado": true
+      },
+      {
+        "nombre": "Café",
+        "cantidad": 2,
+        "descripcion": "Cápsulas compatibles",
+        "comprado": false
+      },
+      {
+        "nombre": "Sal",
+        "cantidad": 1,
+        "descripcion": "Fina",
+        "comprado": true
+      },
+      {
+        "nombre": "Azúcar",
+        "cantidad": 1,
+        "descripcion": "Moreno",
+        "comprado": false
+      },
+      {
+        "nombre": "Detergente",
+        "cantidad": 1,
+        "descripcion": "Para ropa de color",
+        "comprado": false
+      },
+      {
+        "nombre": "Papel higiénico",
+        "cantidad": 1,
+        "descripcion": "Pack de 12",
+        "comprado": false
+      }
+    ]
+  },
+  {
+    "nombre": "Películas para ver",
+    "descripcion": "Cine pendiente de este mes",
+    "elementos": [
+      {
+        "nombre": "Inception",
+        "cantidad": 1,
+        "descripcion": "Ciencia ficción / Christopher Nolan",
+        "comprado": false
+      },
+      {
+        "nombre": "The Matrix 2",
+        "cantidad": 1,
+        "descripcion": "Acción / Clásico",
+        "comprado": true
+      },
+      {
+        "nombre": "Interstellar",
+        "cantidad": 1,
+        "descripcion": "Espacio / Banda sonora de Hans Zimmer",
+        "comprado": false
+      },
+      {
+        "nombre": "Pulp Fiction",
+        "cantidad": 1,
+        "descripcion": "Quentin Tarantino",
+        "comprado": false
+      },
+      {
+        "nombre": "Spirited Away",
+        "cantidad": 1,
+        "descripcion": "Studio Ghibli",
+        "comprado": true
+      },
+      {
+        "nombre": "Dune: Parte 2",
+        "cantidad": 1,
+        "descripcion": "Ver en el salón con buen sonido",
+        "comprado": false
+      }
+    ]
+  },
+  {
+    "nombre": "Videojuegos a comprar",
+    "descripcion": "Próximos lanzamientos y ofertas",
+    "elementos": [
+      {
+        "nombre": "Elden Ring",
+        "cantidad": 1,
+        "descripcion": "FromSoftware / Soulslike",
+        "comprado": false
+      },
+      {
+        "nombre": "Zelda: TotK",
+        "cantidad": 1,
+        "descripcion": "Para la Nintendo Switch",
+        "comprado": true
+      },
+      {
+        "nombre": "Hollow Knight",
+        "cantidad": 1,
+        "descripcion": "Metroidvania indie",
+        "comprado": false
+      },
+      {
+        "nombre": "Cyberpunk 2077",
+        "cantidad": 1,
+        "descripcion": "Esperar a que esté de oferta",
+        "comprado": false
+      }
+    ]
+  }
+]
