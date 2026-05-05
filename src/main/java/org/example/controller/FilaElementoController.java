@@ -3,6 +3,7 @@ package org.example.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import org.example.model.Elemento;
 import javafx.fxml.FXMLLoader;
@@ -74,6 +75,7 @@ public class FilaElementoController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Editar Elemento");
             dialogStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            dialogStage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/assets/icono_appuntalo.png")));
             dialogStage.setScene(new Scene(root));
             dialogStage.showAndWait();
 

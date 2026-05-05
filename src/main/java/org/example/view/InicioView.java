@@ -3,6 +3,7 @@ package org.example.view;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class InicioView extends Application {
@@ -17,7 +18,9 @@ public class InicioView extends Application {
     public static void mostrar(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(InicioView.class.getResource("/org/example/view/InicioView.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+            Scene scene = new Scene(fxmlLoader.load(), 800, 800);
+
+            stage.getIcons().add(new Image(InicioView.class.getResourceAsStream("/org/example/assets/icono_appuntalo.png")));
 
             stage.setTitle("Appuntalo - Mis Listas");
             stage.setScene(scene);

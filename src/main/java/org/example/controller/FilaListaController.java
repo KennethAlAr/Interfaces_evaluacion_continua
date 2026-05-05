@@ -30,7 +30,7 @@ public class FilaListaController {
         if (lista.getElementos() != null) {
             cantidad = lista.getElementos().size();
         }
-        lblCantidad.setText("(" + cantidad + " elementos)");
+        lblCantidad.setText(String.valueOf(cantidad));
     }
 
     //Le dice a InicioController que elimine la lista y actualice el json.

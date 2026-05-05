@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -91,6 +93,7 @@ public class InicioController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Añadir Lista");
             dialogStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            dialogStage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/assets/icono_appuntalo.png")));
             dialogStage.setScene(new Scene(root));
             dialogStage.showAndWait();
 
@@ -112,6 +115,14 @@ public class InicioController {
         alerta.setTitle(titulo);
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
+        Stage stageDeAlerta = (Stage) alerta.getDialogPane().getScene().getWindow();
+        stageDeAlerta.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/assets/icono_appuntalo.png")));
+        ImageView iconoPersonalizado = new ImageView(new Image(getClass().getResourceAsStream("/org/example/assets/icono_warning.png")));
+        iconoPersonalizado.setFitWidth(48);
+        iconoPersonalizado.setFitHeight(48);
+        alerta.setGraphic(iconoPersonalizado);
+        DialogPane dialogPane = alerta.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/org/example/style/estilos.css").toExternalForm());
         alerta.showAndWait();
     }
 

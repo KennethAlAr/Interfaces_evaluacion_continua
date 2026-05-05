@@ -2,7 +2,11 @@ package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import org.example.model.Elemento;
 
 public class FilaNuevoElementoController {
@@ -56,6 +60,14 @@ public class FilaNuevoElementoController {
         alerta.setTitle(titulo);
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
+        Stage stageDeAlerta = (Stage) alerta.getDialogPane().getScene().getWindow();
+        stageDeAlerta.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/assets/icono_appuntalo.png")));
+        ImageView iconoPersonalizado = new ImageView(new Image(getClass().getResourceAsStream("/org/example/assets/icono_warning.png")));
+        iconoPersonalizado.setFitWidth(48);
+        iconoPersonalizado.setFitHeight(48);
+        alerta.setGraphic(iconoPersonalizado);
+        DialogPane dialogPane = alerta.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/org/example/style/estilos.css").toExternalForm());
         alerta.showAndWait();
     }
 }

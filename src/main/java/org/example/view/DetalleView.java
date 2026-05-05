@@ -3,6 +3,7 @@ package org.example.view;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.example.controller.DetalleController;
 import org.example.controller.InicioController;
@@ -19,6 +20,8 @@ public class DetalleView {
 
             DetalleController controlador = loader.getController();
             controlador.setLista(lista, jefe);
+
+            stage.getIcons().add(new Image(InicioView.class.getResourceAsStream("/org/example/assets/icono_appuntalo.png")));
 
             stage.setScene(new Scene(root));
             stage.setTitle("Viendo: " + lista.getNombre());

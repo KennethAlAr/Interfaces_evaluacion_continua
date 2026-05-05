@@ -1,0 +1,158 @@
+/*Estilos para toda la aplicación*/
+.root {
+    -fx-font-family: "Carlito";
+    -fx-background-color: #EBF4FA;
+}
+
+/*Estilo para los botones con icono*/
+.boton-icono {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.boton-icono:hover {
+    -fx-scale-x: 1.15;
+    -fx-scale-y: 1.15;
+}
+
+.boton-icono:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/*Estilo para los scrolls*/
+.scroll-limpio {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-limpio .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-limpio .scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-limpio .scroll-bar .increment-button,
+.scroll-limpio .scroll-bar .decrement-button,
+.scroll-limpio .scroll-bar .increment-arrow,
+.scroll-limpio .scroll-bar .decrement-arrow {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-shape: null;
+}
+
+.scroll-limpio .scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-limpio .scroll-bar .thumb {
+    -fx-background-color: #D6D6D6;
+    -fx-background-radius: 10px;
+}
+
+.scroll-limpio .scroll-bar .thumb:hover {
+    -fx-background-color: #BDBDBD;
+}
+
+.scroll-limpio .scroll-bar .thumb:pressed {
+    -fx-background-color: #9E9E9E;
+}
+
+/*Estilo para los elementos de las listas*/
+.fila-pildora {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D6E6F2;
+    -fx-border-width: 1px;
+    -fx-background-radius: 50px;
+    -fx-border-radius: 50px;
+    -fx-padding: 10px 20px 10px 20px;
+}
+
+/*Estilos para los text-field*/
+.campo-texto-limpio {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 5px;
+}
+
+.campo-texto-limpio:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/*Estilos para los diferentes botones con texto*/
+.boton-primario {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-family: "Carlito";
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.boton-primario:hover {
+    -fx-background-color: #2ecc71;
+}
+
+.boton-peligro {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-family: "Carlito";
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.boton-peligro:hover {
+    -fx-background-color: #ff5e4d;
+}
+
+
+.boton-secundario {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-font-family: "Carlito";
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.boton-secundario:hover {
+    -fx-background-color: #abb7b7;
+}
+
+/*Estilos para los mensajes de alerta*/
+.dialog-pane {
+    -fx-background-color: #EBF4FA;
+    -fx-font-family: "Carlito";
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #D6E6F2;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: #2C3E50;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.dialog-pane .content {
+    -fx-text-fill: #2C3E50;
+}
+
+.dialog-pane .button {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-font-family: "Carlito";
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.dialog-pane .button:hover {
+    -fx-background-color: #abb7b7;
+}
