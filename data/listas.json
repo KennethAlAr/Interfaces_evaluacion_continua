@@ -1,6 +1,6 @@
 [
   {
-    "nombre": "Lista de la Compra",
+    "nombre": "Lista de la compra",
     "descripcion": "Artículos necesarios para la semana",
     "elementos": [
       {
@@ -94,7 +94,7 @@
         "comprado": false
       },
       {
-        "nombre": "The Matrix 2",
+        "nombre": "The Matrix",
         "cantidad": 1,
         "descripcion": "Acción / Clásico",
         "comprado": true

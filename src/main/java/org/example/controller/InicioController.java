@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,71 +12,87 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.example.model.Lista;
 import org.example.util.JsonManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InicioController {
 
-    @FXML private VBox vboxListas;
-    private ObservableList<Lista> listasElementos = FXCollections.observableArrayList();
-    @FXML private ScrollPane scrollTableroListas;
+    private ObservableList<Object> listasElementos = FXCollections.observableArrayList();
+    @FXML private ListView<Object> listViewListas;
+    @FXML private VBox vboxPrincipal;
+    private static final Object NUEVO_CREAR_LISTA = new Object();
 
     //Se ejecuta automáticamente al abrir la aplicación. Carga los datos del archivo json y dibuja las listas iniciales.
     @FXML
     public void initialize() {
         List<Lista> cargadas = JsonManager.cargarDatos();
         listasElementos.addAll(cargadas);
-        actualizarTablero();
+        listasElementos.add(NUEVO_CREAR_LISTA);
+        listViewListas.setItems(listasElementos);
+        listViewListas.setCellFactory(param -> new ListCell<Object>() {
+            private HBox filaListaHBox;
+            private FilaListaController filaListaController;
+            private HBox filaNuevaListaHBox;
+            private FilaNuevaListaController filaNuevaListaController;
+
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                }
+                else if (item == NUEVO_CREAR_LISTA) {
+                    if (filaNuevaListaHBox == null) {
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/view/FilaNuevaLista.fxml"));
+                            filaNuevaListaHBox = loader.load();
+                            filaNuevaListaController = loader.getController();
+                            filaNuevaListaController.setJefe(InicioController.this);
+                            filaNuevaListaHBox.prefWidthProperty().bind(listViewListas.widthProperty().subtract(30));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    setGraphic(filaNuevaListaHBox);
+                    setText(null);
+                }
+                else if (item instanceof Lista) {
+                    Lista listaReal = (Lista) item;
+
+                    if (filaListaHBox == null) {
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/view/FilaLista.fxml"));
+                            filaListaHBox = loader.load();
+                            filaListaController = loader.getController();
+                            filaListaHBox.prefWidthProperty().bind(listViewListas.widthProperty().subtract(30));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (filaListaController != null) {
+                        filaListaController.cargarDatos(listaReal, InicioController.this);
+                    }
+                    setGraphic(filaListaHBox);
+                    setText(null);
+                }
+            }
+        });
     }
 
-    //Limpia el contenedor central y vuelve a dibjuar todas las filas de las listas una a una, añadiendo la fila
-    //interactiva de creación al final.
-    private void actualizarTablero() {
-        vboxListas.getChildren().clear();
-
-        for (Lista lista : listasElementos) {
-            HBox fila = crearFilaLista(lista);
-            vboxListas.getChildren().add(fila);
+    //Filtra la lista de la interfaz para extraer exclusivamente los objetos de tipo Lista.
+    private List<Lista> obtenerListasReales() {
+        List<Lista> reales = new ArrayList<>();
+        for (Object obj : listasElementos) {
+            if (obj instanceof Lista) {
+                reales.add((Lista) obj);
+            }
         }
-
-        HBox filaNuevaLista = crearFilaNuevaLista();
-        vboxListas.getChildren().add(filaNuevaLista);
-    }
-
-    //Carga el diseño del FXML de una fila y le añade los datos de su lista correspondiente y la referencia a InicioController.
-    private HBox crearFilaLista(Lista lista) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/view/FilaLista.fxml"));
-            HBox hbox = loader.load();
-
-            FilaListaController controladorFila = loader.getController();
-
-            controladorFila.cargarDatos(lista, this);
-
-            return hbox;
-        } catch (Exception e) {
-            System.out.println("Error al cargar la fila FXML: " + e.getMessage());
-            return new HBox();
-        }
-    }
-
-    //Carga el FXML de la fila vacía para crear una nueva lista y asigna el controlador "jefe" (InicioCOntroller)
-    private HBox crearFilaNuevaLista() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/view/FilaNuevaLista.fxml"));
-            HBox hbox = loader.load();
-
-            FilaNuevaListaController controller = loader.getController();
-            controller.setJefe(this);
-
-            return hbox;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HBox();
-        }
+        return reales;
     }
 
     //Abre una ventana emergente con el formulario para crear una lista nueva.
@@ -98,7 +113,6 @@ public class InicioController {
             dialogStage.showAndWait();
 
         } catch (Exception e) {
-            System.out.println("Error al abrir la ventana de nueva lista:");
             e.printStackTrace();
         }
     }
@@ -126,11 +140,10 @@ public class InicioController {
         alerta.showAndWait();
     }
 
-    //Borra la lista seleccionada, aztualiza el tablero y guarda los datos en el json.
+    //Borra la lista seleccionada, actualiza el tablero y guarda los datos en el json.
     public void eliminarLista(Lista lista) {
         listasElementos.remove(lista);
-        actualizarTablero();
-        JsonManager.guardarDatos(listasElementos);
+        JsonManager.guardarDatos(obtenerListasReales());
     }
 
     //Valida el nombre de la lista, actualiza los datos y los guarda en el json.
@@ -142,20 +155,17 @@ public class InicioController {
             return false;
         }
 
-        for (Lista l : listasElementos) {
+        for (Lista l : obtenerListasReales()) {
             if (l.getNombre().equalsIgnoreCase(nombreLimpio)) {
                 mensajeAlerta("Aviso", "Ya existe una lista con este nombre.");
                 return false;
             }
         }
 
-        listasElementos.add(new Lista(nombreLimpio, desc.trim()));
-        actualizarTablero();
-        JsonManager.guardarDatos(listasElementos);
+        int posicionMarcador = listasElementos.size() - 1;
+        listasElementos.add(posicionMarcador, new Lista(nombreLimpio, desc.trim()));
 
-        PauseTransition pause = new PauseTransition(Duration.millis(50));
-        pause.setOnFinished(e -> scrollTableroListas.setVvalue(1.0));
-        pause.play();
+        JsonManager.guardarDatos(obtenerListasReales());
 
         return true;
     }
@@ -167,18 +177,28 @@ public class InicioController {
         confirmacion.setTitle("Confirmar borrado masivo");
         confirmacion.setHeaderText("¿Estás seguro de que quieres borrar TODAS las listas?");
         confirmacion.setContentText("Esta acción no se puede deshacer y perderás todos los datos.");
+        Stage stage = (Stage) confirmacion.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/assets/icono_appuntalo.png")));
+        confirmacion.getDialogPane().getStylesheets().add(getClass().getResource("/org/example/style/estilos.css").toExternalForm());
+        ImageView icono = new ImageView(new Image(getClass().getResourceAsStream("/org/example/assets/icono_warning.png")));
+        icono.setFitWidth(48);
+        icono.setFitHeight(48);
+        confirmacion.setGraphic(icono);
+        Button botonAceptar = (Button) confirmacion.getDialogPane().lookupButton(ButtonType.OK);
+        if (botonAceptar != null) {
+            botonAceptar.getStyleClass().add("boton-peligro");
+        }
         confirmacion.showAndWait().ifPresent(respuesta -> {
             if (respuesta == ButtonType.OK) {
-                listasElementos.clear();
-                actualizarTablero();
-                JsonManager.guardarDatos(listasElementos);
+                listasElementos.removeIf(item -> item instanceof Lista);
+                JsonManager.guardarDatos(obtenerListasReales());
             }
         });
     }
 
     //Método auxiliar que le dice a JsonManager que sobreescriba el archivo json con el estado actual de las listas.
     public void guardarCambiosJSON() {
-        JsonManager.guardarDatos(listasElementos);
+        JsonManager.guardarDatos(obtenerListasReales());
     }
 
     //Comprueba que el nuevo título no esté siendo usado por otra lista, aplica los cambios, refresca el tablero y guarda.
@@ -190,7 +210,7 @@ public class InicioController {
             return false;
         }
 
-        for (Lista l : listasElementos) {
+        for (Lista l : obtenerListasReales()) {
             if (l != listaAEditar && l.getNombre().equalsIgnoreCase(nombreLimpio)) {
                 mensajeAlerta("Aviso", "Ya existe otra lista con este nombre.");
                 return false;
@@ -200,8 +220,7 @@ public class InicioController {
         listaAEditar.setNombre(nombreLimpio);
         listaAEditar.setDescripcion(nuevaDesc.trim());
 
-        actualizarTablero();
-        JsonManager.guardarDatos(listasElementos);
+        JsonManager.guardarDatos(obtenerListasReales());
 
         return true;
     }

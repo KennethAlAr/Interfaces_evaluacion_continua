@@ -1,6 +1,7 @@
 package org.example.controller;
 
-import javafx.animation.PauseTransition;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,10 +12,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
-import javafx.util.Duration;
 import org.example.model.Elemento;
 import org.example.model.Lista;
 
@@ -22,74 +21,87 @@ public class DetalleController {
 
     @FXML private Label txtNombreLista;
     @FXML private Label txtDescripcionLista;
-    //Para tener la lista de Elementos he creado una Vbox para insertar el ScrollPane donde van las HBox de cada fila
-    //y debajo la fila para crear un nuevo elemento.
-    @FXML private VBox vboxElementos;
-    @FXML private ScrollPane scrollTableroElementos;
+    @FXML private ListView<Object> listViewElementos;
+    private ObservableList<Object> elementosVisibles = FXCollections.observableArrayList();
+    private static final Object NUEVO_CREAR_ELEMENTO = new Object();
 
     private Lista listaActual;
     //Guardamos el InicioController porque es quien hace el control de las listas y la permanencia de datos de estas,
     //ya que DetalleController solo tiene acceso a la información de la lista que está enseñando.
     private InicioController inicioController;
 
-    //setLista recibe la lista que vamos a mostrar y de dónde viene.
+    //setLista recibe la lista que vamos a mostrar y de dónde viene y lo prepara en la ListView.
     public void setLista(Lista lista, InicioController jefe) {
         this.listaActual = lista;
         this.inicioController = jefe;
         this.txtNombreLista.setText(lista.getNombre());
         this.txtDescripcionLista.setText(lista.getDescripcion());
-        //Cuando tenemos toda la información guardada usamos el método actualizarTableroDetalle para pintarlo en el ScrollPane
-        actualizarTableroDetalle();
+
+        if (lista.getElementos() != null) {
+            elementosVisibles.addAll(lista.getElementos());
+        }
+        elementosVisibles.add(NUEVO_CREAR_ELEMENTO);
+        listViewElementos.setItems(elementosVisibles);
+        listViewElementos.setCellFactory(param -> new ListCell<Object>() {
+            private HBox filaHBox;
+            private FilaElementoController filaController;
+            private HBox filaNuevaHBox;
+            private FilaNuevoElementoController filaNuevaController;
+
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                }
+                else if (item == NUEVO_CREAR_ELEMENTO) {
+                    if (filaNuevaHBox == null) {
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/view/FilaNuevoElemento.fxml"));
+                            filaNuevaHBox = loader.load();
+                            filaNuevaController = loader.getController();
+                            filaNuevaController.setJefe(DetalleController.this);
+                            filaNuevaHBox.prefWidthProperty().bind(listViewElementos.widthProperty().subtract(30));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    setGraphic(filaNuevaHBox);
+                    setText(null);
+                }
+                else if (item instanceof Elemento) {
+                    Elemento el = (Elemento) item;
+                    if (filaHBox == null) {
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/view/FilaElemento.fxml"));
+                            filaHBox = loader.load();
+                            filaController = loader.getController();
+                            filaHBox.prefWidthProperty().bind(listViewElementos.widthProperty().subtract(30));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (filaController != null) {
+                        filaController.cargarDatos(el, DetalleController.this);
+                    }
+                    setGraphic(filaHBox);
+                    setText(null);
+                }
+            }
+        });
     }
 
-    //actualizarTableroDetalle borra todo el contenido del VBox y vuelve a dibujar los elementos uno a uno, añadiendo
-    //la fila de creación al final.
-    private void actualizarTableroDetalle() {
-        vboxElementos.getChildren().clear();
-
-        if (listaActual.getElementos() != null) {
-            for (Elemento elemento : listaActual.getElementos()) {
-                HBox fila = crearFilaElemento(elemento);
-                vboxElementos.getChildren().add(fila);
+    //Filtra la lista de la interfaz para extraer exclusivamente los objetos de tipo Elemento.
+    private java.util.List<Elemento> obtenerElementosReales() {
+        java.util.List<Elemento> reales = new java.util.ArrayList<>();
+        for (Object obj : elementosVisibles) {
+            if (obj instanceof Elemento) {
+                reales.add((Elemento) obj);
             }
         }
-        HBox filaNuevoElemento = crearFilaNuevoElemento();
-        vboxElementos.getChildren().add(filaNuevoElemento);
-    }
-
-    //crearFilaElemento carga el diseño del FXML de una fila ya existente e introduce sus datos correspondientes.
-    private HBox crearFilaElemento(Elemento el) {
-        //El uso de try/catch es obligatorio cuando usamos el método load().
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/view/FilaElemento.fxml"));
-            HBox hbox = loader.load();
-
-            FilaElementoController controladorFila = loader.getController();
-            controladorFila.cargarDatos(el, this);
-
-            return hbox;
-        } catch (Exception e) {
-            System.out.println("Error al cargar FilaElemento: " + e.getMessage());
-            //En caso de que haya un error devolvemos un HBox vacío.
-            return new HBox();
-        }
-    }
-
-    //crearFilaNuevoElemento carga el diseño del FXML de la fila interactiva vacía que se coloca al final de la
-    //lista de elementos.
-    private HBox crearFilaNuevoElemento() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/view/FilaNuevoElemento.fxml"));
-            HBox hbox = loader.load();
-
-            FilaNuevoElementoController controller = loader.getController();
-            controller.setJefe(this);
-
-            return hbox;
-        } catch (Exception e) {
-            System.out.println("Error al cargar FilaNuevoElemento: " + e.getMessage());
-            return new HBox();
-        }
+        return reales;
     }
 
     //anadirNuevoElemento válida el nombre (no está vacío ni repetido), lo añade a la lista y vuelve a cargar la información.
@@ -102,35 +114,28 @@ public class DetalleController {
             return false;
         }
 
-        if (listaActual.getElementos() != null) {
-            for (Elemento el : listaActual.getElementos()) {
-                if (el.getNombre().equalsIgnoreCase(nombreLimpio)) {
-                    mensajeAlerta("Aviso", "Ya existe un elemento con este nombre en la lista actual.");
-                    return false;
-                }
+        for (Elemento el : obtenerElementosReales()) {
+            if (el.getNombre().equalsIgnoreCase(nombreLimpio)) {
+                mensajeAlerta("Aviso", "Ya existe un elemento con este nombre en la lista actual.");
+                return false;
             }
         }
 
+        int posicionMarcador = elementosVisibles.size() - 1;
+        elementosVisibles.add(posicionMarcador, nuevoElemento);
         listaActual.getElementos().add(nuevoElemento);
-        actualizarTableroDetalle();
-        //guardarCambios guarda la información en el archivo json del proyecto.
         guardarCambios();
-
-        //He añadido una pausa después de actualizar el tablero para ir al nuevo elemento creado. Esta pausa es necesaria
-        //porque si no lo hacía así el programa se movía al final y a veces actualizaba el tablero después.
-        PauseTransition pause = new PauseTransition(Duration.millis(50));
-        pause.setOnFinished(e -> scrollTableroElementos.setVvalue(1.0));
-        pause.play();
+        listViewElementos.scrollTo(elementosVisibles.size() - 1);
 
         return true;
     }
 
     //Borra el elemento de la lista, actualiza y guarda los datos.
     public void eliminarElemento(Elemento elementoAEliminar) {
+        elementosVisibles.remove(elementoAEliminar);
         if (listaActual.getElementos() != null) {
             listaActual.getElementos().remove(elementoAEliminar);
         }
-        actualizarTableroDetalle();
         guardarCambios();
     }
 
@@ -159,7 +164,6 @@ public class DetalleController {
             dialogStage.showAndWait();
 
         } catch (Exception e) {
-            System.out.println("Error al abrir la ventana de nuevo elemento:");
             e.printStackTrace();
         }
     }
@@ -171,14 +175,23 @@ public class DetalleController {
         confirmacion.setTitle("Confirmar borrado masivo");
         confirmacion.setHeaderText("¿Estás seguro de que quieres borrar TODOS los elementos?");
         confirmacion.setContentText("Esta acción no se puede deshacer y vaciará la lista por completo.");
-
+        Stage stage = (Stage) confirmacion.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/assets/icono_appuntalo.png")));
+        confirmacion.getDialogPane().getStylesheets().add(getClass().getResource("/org/example/style/estilos.css").toExternalForm());
+        ImageView icono = new ImageView(new Image(getClass().getResourceAsStream("/org/example/assets/icono_warning.png")));
+        icono.setFitWidth(48);
+        icono.setFitHeight(48);
+        confirmacion.setGraphic(icono);
+        Button botonAceptar = (Button) confirmacion.getDialogPane().lookupButton(ButtonType.OK);
+        if (botonAceptar != null) {
+            botonAceptar.getStyleClass().add("boton-peligro");
+        }
         confirmacion.showAndWait().ifPresent(respuesta -> {
             if (respuesta == ButtonType.OK) {
+                elementosVisibles.removeIf(item -> item instanceof Elemento);
                 if (listaActual.getElementos() != null) {
                     listaActual.getElementos().clear();
                 }
-
-                actualizarTableroDetalle();
                 guardarCambios();
             }
         });
@@ -217,12 +230,10 @@ public class DetalleController {
             return false;
         }
 
-        if (listaActual.getElementos() != null) {
-            for (Elemento el : listaActual.getElementos()) {
-                if (el != elementoOriginal && el.getNombre().equalsIgnoreCase(nombreLimpio)) {
-                    mensajeAlerta("Aviso", "Ya existe otro elemento con este nombre en la lista.");
-                    return false;
-                }
+        for (Elemento el : obtenerElementosReales()) {
+            if (el != elementoOriginal && el.getNombre().equalsIgnoreCase(nombreLimpio)) {
+                mensajeAlerta("Aviso", "Ya existe otro elemento con este nombre en la lista.");
+                return false;
             }
         }
 
@@ -230,7 +241,8 @@ public class DetalleController {
         elementoOriginal.setCantidad(nuevaCantidad);
         elementoOriginal.setDescripcion(nuevaDesc.trim());
 
-        actualizarTableroDetalle();
+        // Forzamos al ListView a refrescar los textos
+        listViewElementos.refresh();
         guardarCambios();
 
         return true;
